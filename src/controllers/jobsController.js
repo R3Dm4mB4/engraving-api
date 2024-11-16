@@ -1,5 +1,5 @@
 import Jobs from '../models/Jobs.js'
-import { uploadFiles } from '../utils/utils.js'
+import { handleUpload } from '../utils/cloudinary.js'
 
 export const getAllJobs = async (req, res) => {
   try {
@@ -30,7 +30,8 @@ export const createJob = async(req, res) => {
   try {
     // Before job is created, the item file(s) must be uploaded so it 
     // will be available for preview
-    const itemsUrls = await uploadFiles(files)
+    const itemsUrls = await handleUpload(files, 'jobs')
+
     const newJob = new Jobs({
       title,
       store,
@@ -41,7 +42,8 @@ export const createJob = async(req, res) => {
     const response = await newJob.save()
     res.status(200).json({ msg: 'New job created', details: response })
   } catch (error) {
-    res.status(500).msg({ msg: 'Server error', error })
+    console.error(error)
+    res.status(500).json({ msg: 'Server error', error })
   } 
 }
 

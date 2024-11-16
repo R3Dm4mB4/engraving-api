@@ -1,4 +1,3 @@
-import { uploadFiles } from '../utils/utils.js'
 import Engravables from '../models/Engravables.js'
 
 export const newProduct = async (req, res) => {
