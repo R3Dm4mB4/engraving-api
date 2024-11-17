@@ -1,15 +1,16 @@
 import Engravables from '../models/Engravables.js'
+import { handleUpload } from '../utils/cloudinary.js'
 
 export const newProduct = async (req, res) => {
   const { name, price, code } = req.body
-  //const { files } = req.files
+  const files = req.files
   try {
-    //const imageUrls = await uploadFiles(files)
+    const imageUrls = await handleUpload(files, 'engravable_products')
     const newEngravable = new Engravables({
       name,
       price,
       code,
-      imageUrls: ['https://via.placeholder.com/300']
+      imageUrls
     })
     await newEngravable.save()
     res.status(200).json({ msg: 'New product registered' })

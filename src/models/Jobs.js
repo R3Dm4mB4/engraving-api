@@ -1,25 +1,28 @@
-import mongoose from 'mongoose'
+import { Schema, model } from 'mongoose'
 
-const JobsSchema = new mongoose.Schema({
-  status: {
-    type: String,
-    default: 'Received'
+const JobsSchema = new Schema({
+  status:       { type: String, default: 'Received', enum: ['Received', 'In Progress', 'Finished'] },
+  notes:        { type: String, default: '' },
+  store:        { type: String, default: '' },
+  startedAt:    { type: Date,   default: Date.now },
+  finishedAt:   { type: Date,   default: null },
+  totalPrice:   { type: Number, default: 0 },
+  customerInfo: {
+    phone: { type: String, default: '' },
+    name:  { type: String, default: '' }
   },
-  title: String,
-  notes: String,
-  store: String,
-  description: String,
-  startedAt: {
-    type: Date,
-    default: Date.now
+  productInfo:  {
+    productCode:       { type: String, default: '' },
+    engravablesImages: { type: [String], default: [] }
   },
-  finishedAt: {
-    type: Date
-  },
-  totalPrice: {
-    type: Number
-  },
-  engravablesPreview: [String]
+  salesRepName: { type: String, default: '' }
+}, { minimize: false })
+
+JobsSchema.pre('save', function(next) {
+  if (this.status == 'Finished' && !this.finishedAt) {
+    this.finishedAt = new Date()
+  }
+  next()
 })
 
-export default mongoose.model('Jobs', JobsSchema)
+export default model('Jobs', JobsSchema)
