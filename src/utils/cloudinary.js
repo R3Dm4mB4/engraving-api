@@ -1,6 +1,7 @@
 import { v2 as cloudinary } from 'cloudinary'
 import dotenv from 'dotenv'
 import streamifier from 'streamifier'
+import { UploadError } from './error.js'
 dotenv.config()
 
 cloudinary.config({
@@ -36,7 +37,7 @@ export async function handleUpload(files, folderName) {
     }
   } catch (error) {
     console.error(error)
-    throw error
+    throw new UploadError('Failed to upload files to Cloudinary', error)
   }
   return urls
 }
