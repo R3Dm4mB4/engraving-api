@@ -13,9 +13,11 @@ const jobSchema = vine.object({
     phone: vine.string(),
     name: vine.string()
   }),
-  productInfo: vine.object({
-    productCode: vine.string(),
-  }),
+  products: vine.array(
+    vine.object({
+      productCode: vine.string()
+    })
+  ),
   salesRepName: vine.string()
 })
 
@@ -50,7 +52,7 @@ export const createJob = async(req, res) => {
       store,
       totalPrice,
       customerInfo,
-      productInfo,
+      products,
       salesRepName
     } = await validateReqBody(req.body, jobSchema)
 
@@ -63,10 +65,7 @@ export const createJob = async(req, res) => {
       store,
       totalPrice,
       customerInfo,
-      productInfo: {
-        productCode: productInfo.productCode,
-        engravablesImages: itemsUrls
-      },
+      products, // Modificar
       salesRepName
     })
     const response = await newJob.save()

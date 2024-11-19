@@ -11,10 +11,10 @@ const JobsSchema = new Schema({
     phone: { type: String, default: '' },
     name:  { type: String, default: '' }
   },
-  productInfo:  {
-    productCode:       { type: String, default: '' },
-    engravablesImages: { type: [String], default: [] }
-  },
+  products:     [{
+    productCode:        { type: String, default: '' },
+    engravePreviewImgs: { type: [String], default: [] }
+  }],
   salesRepName: { type: String, default: '' }
 }, { minimize: false })
 
