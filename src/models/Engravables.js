@@ -4,7 +4,8 @@ const EngravablesSchema = new Schema({
   imageUrls: [String],
   name: String,
   price: Number,
-  code: String
+  code: String,
+  bothSidesEngravable: Boolean
 })
 
 export default model('Engravables', EngravablesSchema)
