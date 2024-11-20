@@ -13,8 +13,8 @@ router.post('/jobs/register', upload.array('images', 3), createJob)
 router.patch('/jobs/update', updateJob)
 
 // Upload engravable items
-router.post('/engravables/register', [auth, authorized('admin'), upload.array('images', 3)], newProduct)
-router.patch('/engravables/update', [auth, authorized('admin'), upload.array('image', 3)], updateProduct)
+router.post('/engravables/register', [auth, authorized('admin'), upload.array('images')], newProduct)
+router.put('/engravables/update', [auth, authorized('admin'), upload.array('images')], updateProduct)
 router.delete('/engravables/delete', [auth, authorized('admin')], deleteProduct)
 router.get('/engravables/all', getProducts)
 
