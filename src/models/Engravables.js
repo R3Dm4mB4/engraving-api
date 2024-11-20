@@ -1,11 +1,11 @@
 import { Schema, model } from 'mongoose'
 
 const EngravablesSchema = new Schema({
-  imageUrls: [String],
-  name: String,
-  price: Number,
-  code: String,
-  bothSidesEngravable: Boolean
+  name:                { type: String, default: '' },
+  price:               { type: Number, default: 0 },
+  code:                { type: String, default: '' },
+  bothSidesEngravable: { type: Boolean, default: false },
+  imageUrls:           { type: [String], default: [] }
 })
 
 export default model('Engravables', EngravablesSchema)
