@@ -2,7 +2,7 @@ import Engravables from '../models/Engravables.js'
 import { handleUpload } from '../utils/cloudinary.js'
 
 export const newProduct = async (req, res) => {
-  const { name, price, code } = req.body
+  const { name, price, code, bothSidesEngravable } = req.body
   const files = req.files
   try {
     const imageUrls = await handleUpload(files, 'engravable_products')
@@ -10,6 +10,7 @@ export const newProduct = async (req, res) => {
       name,
       price,
       code,
+      bothSidesEngravable,
       imageUrls
     })
     await newEngravable.save()
@@ -20,7 +21,7 @@ export const newProduct = async (req, res) => {
 }
 
 export const updateProduct = async (req, res) => {
-  const { name, price, code } = req.body
+  const { name, price, code, bothSidesEngravable } = req.body
   const { id } = req.query
   try {
     const updatedProduct = await Engravables.findByIdAndUpdate(id, {
@@ -36,6 +37,16 @@ export const getProducts = async (req, res) => {
   try {
     const products = await Engravables.find()
     res.status(200).json({ products })
+  } catch (error) {
+    res.status(500).json({ msg: 'Server error', error })
+  }
+}
+
+export const deleteProduct = async (req, res) => {
+  try {
+    const { id } = req.query
+    await Engravables.findOneAndDelete({ _id: id })
+    res.status(200).json({ msg: 'Product deleted' })
   } catch (error) {
     res.status(500).json({ msg: 'Server error', error })
   }
