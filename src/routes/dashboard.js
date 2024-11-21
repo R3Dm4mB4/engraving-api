@@ -9,7 +9,7 @@ const router = Router()
 // List all jobs, or apply filters
 router.get('/jobs/all', [auth, authorized('admin', 'employee'), upload.array('images', 3)], getAllJobs)
 router.get('/jobs/query/date', [auth, authorized('admin', 'employee')], getJobsByDate)
-router.post('/jobs/register', upload.array('images', 3), createJob)
+router.post('/jobs/register', createJob)
 router.patch('/jobs/update', updateJob)
 
 // Upload engravable items
