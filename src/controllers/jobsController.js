@@ -4,20 +4,20 @@ import { handleUpload } from '../utils/cloudinary.js'
 import { validateReqBody } from '../utils/utils.js'
 
 // Vine schemas will only be used to validate body from HTTP request,
-// some values from mongoose schemas may be missing
+// some values from mongoose schema may be missing
 const jobSchema = vine.object({
   notes: vine.string(),
   store: vine.string(),
   totalPrice: vine.number(),
-  customerInfo: vine.object({
-    phone: vine.string(),
-    name: vine.string()
+  customerPhone: vine.string(),
+  customerName: vine.string(),
+  productsIds: vine.array(vine.string()),
+  jobDetails: vine.object({
+    iconId: vine.string().optional(),
+    textToEngrave: vine.string().optional(),
+    textFont: vine.string().optional(),
+    customDesign: vine.string().optional()
   }),
-  products: vine.array(
-    vine.object({
-      productCode: vine.string()
-    })
-  ),
   salesRepName: vine.string()
 })
 
@@ -45,27 +45,26 @@ export const getJobsByDate = async(req, res) => {
 }
 
 export const createJob = async(req, res) => {
-  const files = req.files
   try {
     const {
       notes,
       store,
       totalPrice,
-      customerInfo,
-      products,
+      customerPhone,
+      customerName,
+      productsIds,
+      jobDetails,
       salesRepName
     } = await validateReqBody(req.body, jobSchema)
-
-    // Before job is created, the item file(s) must be uploaded so it 
-    // will be available for preview
-    const itemsUrls = await handleUpload(files, 'jobs')
 
     const newJob = new Jobs({
       notes,
       store,
       totalPrice,
-      customerInfo,
-      products, // Modificar
+      customerName,
+      customerPhone,
+      productsIds,
+      jobDetails,
       salesRepName
     })
     const response = await newJob.save()
