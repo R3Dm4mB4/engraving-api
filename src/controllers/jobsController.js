@@ -1,6 +1,5 @@
 import vine from '@vinejs/vine'
 import Jobs from '../models/Jobs.js'
-import { handleUpload } from '../utils/cloudinary.js'
 import { validateReqBody } from '../utils/utils.js'
 
 // Vine schemas will only be used to validate body from HTTP request,
@@ -16,7 +15,8 @@ const jobSchema = vine.object({
     iconId: vine.string().optional(),
     textToEngrave: vine.string().optional(),
     textFont: vine.string().optional(),
-    customDesign: vine.string().optional()
+    customDesign: vine.string().optional(),
+    sideToEngrave: vine.string()
   }),
   salesRepName: vine.string()
 })
@@ -44,7 +44,7 @@ export const getJobsByDate = async(req, res) => {
 
 }
 
-export const createJob = async(req, res) => {
+export const createJob = async(req, res, next) => {
   try {
     const {
       notes,

@@ -15,9 +15,10 @@ const JobsSchema = new Schema({
     textToEngrave: { type: String, default: '' },
     textFont:      { type: String, default: '' },
     customDesign:  { type: String, default: '' },
+    sideToEngrave: { type: String, default: 'Front', enum: ['Front', 'Backwards', 'Both'] }
   },
   salesRepName:  { type: String, default: '' },
-  jobCode:       { type: String, unique: true, required: true }
+  jobCode:       { type: String, unique: true }
 }, { minimize: false })
 
 JobsSchema.pre('save', function(next) {
