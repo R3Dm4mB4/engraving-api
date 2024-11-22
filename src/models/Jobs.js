@@ -18,6 +18,10 @@ const JobsSchema = new Schema({
     sideToEngrave: { type: String, default: 'Front', enum: ['Front', 'Backwards', 'Both'] }
   },
   salesRepName:  { type: String, default: '' },
+  assignedTo:     {
+    employeeId:   { type: String, default: '' },
+    employeeName: { type: String, default: '' }
+  },
   jobCode:       { type: String, unique: true }
 }, { minimize: false })
 
