@@ -19,7 +19,6 @@ export class MakeIo {
 
   static setupListeners() {
     this.io.on('connection', (socket) => {
-      this.setEmployeeToRoom(socket)
       this.authenticateSocket(socket)
     })
     console.log('Listeners set up')
