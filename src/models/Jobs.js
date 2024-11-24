@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose'
 
 const JobsSchema = new Schema({
-  status:        { type: String, default: 'Received', enum: ['Received', 'Done', 'Cancelled'] },
+  status:        { type: String, default: 'Not confirmed', enum: ['Not confirmed', 'Received', 'Done', 'Cancelled'] },
   notes:         { type: String, default: '' },
   store:         { type: String, default: 'Mall' },
   startedAt:     { type: Date,   default: Date.now },
