@@ -1,4 +1,4 @@
-import mongoose, { Schema, model } from 'mongoose'
+import { Schema, model } from 'mongoose'
 
 const JobsSchema = new Schema({
   status:        { type: String, default: 'Received', enum: ['Received', 'Done', 'Cancelled'] },
@@ -9,14 +9,14 @@ const JobsSchema = new Schema({
   totalPrice:    { type: Number, default: 0 },
   customerPhone: { type: String, default: '' },
   customerName:  { type: String, default: '' },
-  productsIds:   { type: [String], default: [] },
-  jobDetails:    {
+  details:      [{
+    productId:     { type: String, default: '' },
     iconId:        { type: String, default: '' },
     textToEngrave: { type: String, default: '' },
     textFont:      { type: String, default: '' },
     customDesign:  { type: String, default: '' },
-    sideToEngrave: { type: String, default: 'Front', enum: ['Front', 'Backwards', 'Both'] }
-  },
+    sideToEngrave: { type: String, default: 'Front', enum: ['Front', 'Backwards', 'Both', 'Custom'] }
+  }],
   salesRepName:  { type: String, default: '' },
   assignedTo:     {
     employeeId:   { type: String, default: '' },
@@ -36,31 +36,30 @@ JobsSchema.pre('save', async function(next) {
   if (this.jobCode && !this.isNew) {
     return next()
   }
-  const genCode = () => {
+  try {
     const date = new Date()
     const year = date.getFullYear().toString().slice(-2)
     const month = (date.getMonth() + 1).toString().padStart(2, '0')
     const day = date.getDate().toString().padStart(2, '0')
-    const randNum = Math.floor(100 + Math.random() * 900).toString()
+    const dateString = `${year}-${month}-${day}`
+    
+    const lastJob = await model('Jobs').findOne({ jobCode: { $regex: `^${dateString}` } })
+      .sort({ jobCode: -1 })
+      .exec()
+    
+    let seqNumber = '001'
 
-    return`${year}-${month}-${day}-${randNum}` 
-  }
-  const MAX_ATTEMPTS = 7
-  let attempts = 0
-  let unique = false
-  while (!unique && attempts < MAX_ATTEMPTS) {
-    const code = genCode()
-    const codeExists = await mongoose.models.Jobs.findOne({ jobCode: code })
-    if (!codeExists) {
-      this.jobCode = code
-      unique = true
+    if (lastJob && lastJob.jobCode) {
+      const lastSeq = parseInt(lastJob.jobCode.split('-').pop(), 10)
+      const nextSeq = lastSeq + 1
+      seqNumber = nextSeq.toString().padStart(3, '0')
     }
-    attempts++
+    
+    this.jobCode = `${dateString}-${seqNumber}`
+    next()
+  } catch (error) {
+    next(error)
   }
-  if (!unique) {
-    return next(new Error('Unable to generate job unique code'))
-  }
-  next()
 })
 
 export default model('Jobs', JobsSchema)

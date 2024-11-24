@@ -11,14 +11,16 @@ const jobSchema = vine.object({
   totalPrice: vine.number(),
   customerPhone: vine.string(),
   customerName: vine.string(),
-  productsIds: vine.array(vine.string()),
-  jobDetails: vine.object({
-    iconId: vine.string().optional(),
-    textToEngrave: vine.string().optional(),
-    textFont: vine.string().optional(),
-    customDesign: vine.string().optional(),
-    sideToEngrave: vine.string()
-  }),
+  details: vine.array(
+    vine.object({ 
+      productId: vine.string(),
+      iconId: vine.string().optional(),
+      textToEngrave: vine.string().optional(),
+      textFont: vine.string().optional(),
+      customDesign: vine.string().optional(),
+      sideToEngrave: vine.string().optional()
+    })
+  ),
   salesRepName: vine.string(),
   assignedTo: vine.object({
     employeeId: vine.string(),
@@ -57,8 +59,7 @@ export const createJob = async(req, res, next) => {
       totalPrice,
       customerPhone,
       customerName,
-      productsIds,
-      jobDetails,
+      details,
       salesRepName,
       assignedTo
     } = await validateReqBody(req.body, jobSchema)
@@ -69,8 +70,7 @@ export const createJob = async(req, res, next) => {
       totalPrice,
       customerName,
       customerPhone,
-      productsIds,
-      jobDetails,
+      details,
       salesRepName,
       assignedTo
     })
