@@ -1,15 +1,16 @@
 import { Schema, model } from 'mongoose'
 
 const JobsSchema = new Schema({
-  status:        { type: String, default: 'Not confirmed', enum: ['Not confirmed', 'Received', 'Done', 'Cancelled'] },
-  notes:         { type: String, default: '' },
-  store:         { type: String, default: 'Mall' },
-  startedAt:     { type: Date,   default: Date.now },
-  finishedAt:    { type: Date,   default: null },
-  totalPrice:    { type: Number, default: 0 },
-  customerPhone: { type: String, default: '' },
-  customerName:  { type: String, default: '' },
-  details:      [{
+  status:          { type: String, default: 'Not confirmed', enum: ['Not confirmed', 'Received', 'Done', 'Cancelled'] },
+  notes:           { type: String, default: '' },
+  transactionCode: { type: String, default: '' },
+  store:           { type: String, default: 'Mall' },
+  startedAt:       { type: Date,   default: Date.now },
+  finishedAt:      { type: Date,   default: null },
+  totalPrice:      { type: Number, default: 0 },
+  customerPhone:   { type: String, default: '' },
+  customerName:    { type: String, default: '' },
+  details:         [{
     productId:     { type: String, default: '' },
     iconId:        { type: String, default: '' },
     textToEngrave: { type: String, default: '' },
@@ -17,17 +18,24 @@ const JobsSchema = new Schema({
     customDesign:  { type: String, default: '' },
     sideToEngrave: { type: String, default: 'Front', enum: ['Front', 'Backwards', 'Both', 'Custom'] }
   }],
-  salesRepName:  { type: String, default: '' },
+  salesRepName:    { type: String, default: '' },
   assignedTo:     {
     employeeId:   { type: String, default: '' },
     employeeName: { type: String, default: '' }
   },
-  jobCode:       { type: String, unique: true }
+  jobCode:         { type: String, unique: true }
 }, { minimize: false })
 
 JobsSchema.pre('save', function(next) {
   if (this.status == 'Done' && !this.finishedAt) {
     this.finishedAt = new Date()
+  }
+  next()
+})
+
+JobsSchema.pre('save', function(next) {
+  if (this.transactionCode && this.status === 'Not confirmed') {
+    this.status = 'Received'
   }
   next()
 })
