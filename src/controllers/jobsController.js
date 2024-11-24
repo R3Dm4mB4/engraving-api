@@ -1,6 +1,7 @@
 import vine from '@vinejs/vine'
 import Jobs from '../models/Jobs.js'
 import { validateReqBody } from '../utils/utils.js'
+import { MakeIo } from '../utils/socketio.js'
 
 // Vine schemas will only be used to validate body from HTTP request,
 // some values from mongoose schema may be missing
@@ -18,7 +19,11 @@ const jobSchema = vine.object({
     customDesign: vine.string().optional(),
     sideToEngrave: vine.string()
   }),
-  salesRepName: vine.string()
+  salesRepName: vine.string(),
+  assignedTo: vine.object({
+    employeeId: vine.string(),
+    employeeName: vine.string()
+  })
 })
 
 export const getAllJobs = async (req, res) => {
@@ -54,7 +59,8 @@ export const createJob = async(req, res, next) => {
       customerName,
       productsIds,
       jobDetails,
-      salesRepName
+      salesRepName,
+      assignedTo
     } = await validateReqBody(req.body, jobSchema)
 
     const newJob = new Jobs({
@@ -65,13 +71,16 @@ export const createJob = async(req, res, next) => {
       customerPhone,
       productsIds,
       jobDetails,
-      salesRepName
+      salesRepName,
+      assignedTo
     })
     const response = await newJob.save()
     res.status(200).json({ msg: 'New job created', details: response })
+    const io = MakeIo.getIO()
+    io.emit('pushJobToList', response)
   } catch (error) {
     next(error)
-  } 
+  }
 }
 
 export const updateJob = async (req, res) => {

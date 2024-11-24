@@ -1,7 +1,7 @@
 import mongoose, { Schema, model } from 'mongoose'
 
 const JobsSchema = new Schema({
-  status:        { type: String, default: 'Received', enum: ['Received', 'Done'] },
+  status:        { type: String, default: 'Received', enum: ['Received', 'Done', 'Cancelled'] },
   notes:         { type: String, default: '' },
   store:         { type: String, default: 'Mall' },
   startedAt:     { type: Date,   default: Date.now },
@@ -18,6 +18,10 @@ const JobsSchema = new Schema({
     sideToEngrave: { type: String, default: 'Front', enum: ['Front', 'Backwards', 'Both'] }
   },
   salesRepName:  { type: String, default: '' },
+  assignedTo:     {
+    employeeId:   { type: String, default: '' },
+    employeeName: { type: String, default: '' }
+  },
   jobCode:       { type: String, unique: true }
 }, { minimize: false })
 
