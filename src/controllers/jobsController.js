@@ -9,16 +9,19 @@ const jobSchema = vine.object({
   notes: vine.string(),
   store: vine.string(),
   totalPrice: vine.number(),
+  transactionCode: vine.string().optional(),
   customerPhone: vine.string(),
   customerName: vine.string(),
-  productsIds: vine.array(vine.string()),
-  jobDetails: vine.object({
-    iconId: vine.string().optional(),
-    textToEngrave: vine.string().optional(),
-    textFont: vine.string().optional(),
-    customDesign: vine.string().optional(),
-    sideToEngrave: vine.string()
-  }),
+  details: vine.array(
+    vine.object({ 
+      productId: vine.string(),
+      iconId: vine.string().optional(),
+      textToEngrave: vine.string().optional(),
+      textFont: vine.string().optional(),
+      customDesign: vine.string().optional(),
+      sideToEngrave: vine.string().optional()
+    })
+  ),
   salesRepName: vine.string(),
   assignedTo: vine.object({
     employeeId: vine.string(),
@@ -57,10 +60,10 @@ export const createJob = async(req, res, next) => {
       totalPrice,
       customerPhone,
       customerName,
-      productsIds,
-      jobDetails,
+      details,
       salesRepName,
-      assignedTo
+      assignedTo,
+      transactionCode
     } = await validateReqBody(req.body, jobSchema)
 
     const newJob = new Jobs({
@@ -69,10 +72,10 @@ export const createJob = async(req, res, next) => {
       totalPrice,
       customerName,
       customerPhone,
-      productsIds,
-      jobDetails,
+      details,
       salesRepName,
-      assignedTo
+      assignedTo,
+      transactionCode
     })
     const response = await newJob.save()
     res.status(200).json({ msg: 'New job created', details: response })
