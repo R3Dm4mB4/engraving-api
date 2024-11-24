@@ -19,7 +19,7 @@ const JobsSchema = new Schema({
     sideToEngrave: { type: String, default: 'Front', enum: ['Front', 'Backwards', 'Both', 'Custom'] }
   }],
   salesRepName:    { type: String, default: '' },
-  assignedTo:     {
+  assignedTo:      {
     employeeId:   { type: String, default: '' },
     employeeName: { type: String, default: '' }
   },
@@ -34,7 +34,8 @@ JobsSchema.pre('save', function(next) {
 })
 
 JobsSchema.pre('save', function(next) {
-  if (this.transactionCode && this.status === 'Not confirmed') {
+  console.log(this)
+  if (this.transactionCode && (this.status === 'Not confirmed' || this.status == '')) {
     this.status = 'Received'
   }
   next()

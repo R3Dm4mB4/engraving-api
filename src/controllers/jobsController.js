@@ -9,6 +9,7 @@ const jobSchema = vine.object({
   notes: vine.string(),
   store: vine.string(),
   totalPrice: vine.number(),
+  transactionCode: vine.string().optional(),
   customerPhone: vine.string(),
   customerName: vine.string(),
   details: vine.array(
@@ -61,7 +62,8 @@ export const createJob = async(req, res, next) => {
       customerName,
       details,
       salesRepName,
-      assignedTo
+      assignedTo,
+      transactionCode
     } = await validateReqBody(req.body, jobSchema)
 
     const newJob = new Jobs({
@@ -72,7 +74,8 @@ export const createJob = async(req, res, next) => {
       customerPhone,
       details,
       salesRepName,
-      assignedTo
+      assignedTo,
+      transactionCode
     })
     const response = await newJob.save()
     res.status(200).json({ msg: 'New job created', details: response })
