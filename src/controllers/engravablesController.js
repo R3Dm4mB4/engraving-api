@@ -1,17 +1,33 @@
+import vine from '@vinejs/vine'
 import Engravables from '../models/Engravables.js'
 import { handleUpload } from '../utils/cloudinary.js'
+import { validateReqBody } from '../utils/utils.js'
+
+const engravableSchema = vine.object({
+  name: vine.string(),
+  price: vine.number(),
+  code: vine.string(),
+  stock: vine.number(),
+  minStock: vine.number(),
+  bothSidesEngravable: vine.boolean()
+})
 
 export const newProduct = async (req, res) => {
-  const { name, price, code, bothSidesEngravable } = req.body
   const files = req.files
   try {
-    const imageUrls = await handleUpload(files, 'engravable_products')
+    const { name, price, code, stock, minStock, bothSidesEngravable } 
+    = await validateReqBody(req.body, engravableSchema)
+
+    // This must always receive just one image. Change for later
+    const imageUrl = await handleUpload(files, 'engravable_products')
     const newEngravable = new Engravables({
       name,
       price,
       code,
       bothSidesEngravable,
-      imageUrls
+      imageUrl,
+      stock,
+      minStock
     })
     const created = await newEngravable.save()
     res.status(200).json({ msg: 'New product registered', product: created })
@@ -25,6 +41,7 @@ export const updateProduct = async (req, res) => {
   const { id } = req.query
   const files = req.files
   try {
+    // This must receive just one image. Change for later
     if (files && files.length > 0) {
       const newUrls = await handleUpload(files, 'engravable_products')
       imageUrls = newUrls

@@ -2,6 +2,8 @@ import vine from '@vinejs/vine'
 import Jobs from '../models/Jobs.js'
 import { validateReqBody } from '../utils/utils.js'
 import { MakeIo } from '../utils/socketio.js'
+import Engravables from '../models/Engravables.js'
+import Icons from '../models/Icons.js'
 
 // Vine schemas will only be used to validate body from HTTP request,
 // some values from mongoose schema may be missing
@@ -66,13 +68,33 @@ export const createJob = async(req, res, next) => {
       transactionCode
     } = await validateReqBody(req.body, jobSchema)
 
+    const detailsToDB = []
+
+    await details.forEach(async (detailObj) => {
+      const productId = detailObj.productId
+      const iconId = detailObj.iconId
+      const engravableProduct = await Engravables.findById(productId)
+      const icon = await Icons.findById(iconId)
+
+      detailsToDB.push({
+        productCode: engravableProduct.code,
+        productImg: engravableProduct.imageUrl,
+        iconCode: icon.code,
+        iconImg: icon.imageUrl,
+        textToEngrave: detailObj.textToEngrave,
+        textFont: detailObj.textFont,
+        customDesign: detailObj.customDesign,
+        sideToEngrave: detailObj.sideToEngrave
+      })
+    })
+
     const newJob = new Jobs({
       notes,
       store,
       totalPrice,
       customerName,
       customerPhone,
-      details,
+      details: detailsToDB  ,
       salesRepName,
       assignedTo,
       transactionCode
