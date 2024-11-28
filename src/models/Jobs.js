@@ -11,12 +11,14 @@ const JobsSchema = new Schema({
   customerPhone:   { type: String, default: '' },
   customerName:    { type: String, default: '' },
   details:         [{
-    productId:     { type: String, default: '' },
-    iconId:        { type: String, default: '' },
+    productCode:   { type: String, default: '' },
+    productImg:    { type: String, default: '' },
+    iconCode:      { type: String, default: '' },
+    iconImg:       { type: String, default: '' }, 
     textToEngrave: { type: String, default: '' },
     textFont:      { type: String, default: '' },
     customDesign:  { type: String, default: '' },
-    sideToEngrave: { type: String, default: 'Front', enum: ['Front', 'Backwards', 'Both', 'Custom'] }
+    sideToEngrave: { type: String, default: 'Front', enum: ['Front', 'Backwards', 'Both', 'Ring'] }
   }],
   salesRepName:    { type: String, default: '' },
   assignedTo:      {
@@ -50,7 +52,7 @@ JobsSchema.pre('save', async function(next) {
     const year = date.getFullYear().toString().slice(-2)
     const month = (date.getMonth() + 1).toString().padStart(2, '0')
     const day = date.getDate().toString().padStart(2, '0')
-    const dateString = `${year}-${month}-${day}`
+    const dateString = `${day}-${month}-${year}`
     
     const lastJob = await model('Jobs').findOne({ jobCode: { $regex: `^${dateString}` } })
       .sort({ jobCode: -1 })

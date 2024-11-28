@@ -10,7 +10,7 @@ const router = Router()
 router.get('/jobs/all', [auth, authorized('admin', 'employee')], getAllJobs)
 router.get('/jobs/query/date', [auth, authorized('admin', 'employee')], getJobsByDate)
 router.post('/jobs/register', createJob)
-router.patch('/jobs/update', updateJob)
+router.patch('/jobs/update', [auth, authorized('admin', 'employee')], updateJob)
 
 // Upload engravable items
 router.post('/engravables/register', [auth, authorized('admin'), upload.array('images')], newProduct)
