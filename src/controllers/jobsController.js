@@ -109,12 +109,10 @@ export const createJob = async(req, res, next) => {
 }
 
 export const updateJob = async (req, res) => {
-  const { title, store, notes, description, finishedAt } = req.body
+  const updateData = req.body
   const { id } = req.query
   try {
-    const updatedJob = await Jobs.findByIdAndUpdate(id, {
-      $set: { title, store, notes, description, finishedAt }
-    })
+    const updatedJob = await Jobs.findByIdAndUpdate(id, { $set: updateData })
     res.status(200).json({ msg: 'Job updated', job: updatedJob })
   } catch (error) {
     res.status(500).json({ msg: 'Server error', error })
