@@ -9,6 +9,7 @@ const server = createServer(app)
 // Module imports
 import router from './routes/dashboard.js'
 import authRouter from './routes/auth.js'
+import iconRouter from './routes/icons.js'
 import { MakeIo } from './utils/socketio.js'
 dotenv.config()
 
@@ -27,6 +28,7 @@ app.use(cors({
 // Routes
 app.use('/api/v1', router)
 app.use('/auth', authRouter)
+app.use('/api/v1', iconRouter)
 
 
 server.listen(PORT, () => {
