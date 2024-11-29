@@ -7,9 +7,7 @@ const app = express()
 const server = createServer(app)
 
 // Module imports
-import router from './routes/dashboard.js'
-import authRouter from './routes/auth.js'
-import iconRouter from './routes/icons.js'
+import { router as mainRouter } from './routes/index.js'
 import { MakeIo } from './utils/socketio.js'
 dotenv.config()
 
@@ -26,9 +24,7 @@ app.use(cors({
 }))
 
 // Routes
-app.use('/api/v1', router)
-app.use('/auth', authRouter)
-app.use('/api/v1', iconRouter)
+app.use('/api/v1', mainRouter)
 
 
 server.listen(PORT, () => {

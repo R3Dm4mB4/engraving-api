@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose'
 
 const JobsSchema = new Schema({
-  status:          { type: String, default: 'Not confirmed', enum: ['Not confirmed', 'Received', 'Done', 'Cancelled'] },
+  status:          { type: String, default: 'Not confirmed', enum: ['Not confirmed', 'In progress', 'Done', 'Cancelled'] },
   notes:           { type: String, default: '' },
   transactionCode: { type: String, default: '' },
   store:           { type: String, default: 'Mall' },
@@ -38,7 +38,7 @@ JobsSchema.pre('save', function(next) {
 JobsSchema.pre('save', function(next) {
   console.log(this)
   if (this.transactionCode && (this.status === 'Not confirmed' || this.status == '')) {
-    this.status = 'Received'
+    this.status = 'In progress'
   }
   next()
 })
