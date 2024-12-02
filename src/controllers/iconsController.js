@@ -9,10 +9,9 @@ const iconSchema = vine.object({
 })
 
 export const registerIcon = async(req, res, next) => {
-  //const files = req.files
   try {
     const { code, category } = await validateReqBody(req.body, iconSchema)
-    const imageUrl = 'http://image.com/image1223' // await handleUpload(files, 'not_needed_anymore')
+    const imageUrl = await handleUpload(req.file, 'icons')
     const newIcon = new Icons({
       code,
       category,

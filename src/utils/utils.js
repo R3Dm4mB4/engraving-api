@@ -16,18 +16,3 @@ export const validateReqBody = async(data, schema) => {
     throw new ValidationError('Invalid Data Format', error)
   }
 }
-
-/**
- * 
- * @param {string} token Got from auth headers.
- * @returns {string} Decoded user id got from payload
- */
-export const getIdFromToken = async(token) => {
-  // Structure of decoded payload is:
-  // user: {
-  //  id,
-  //  role
-  // }
-  const decoded = await jsonwebtoken.decode(token)
-  return decoded.user.id
-}
