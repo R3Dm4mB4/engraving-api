@@ -7,7 +7,7 @@ const EngravablesSchema = new Schema({
   stock:               { type: Number, default: 0 },
   minStock:            { type: Number, default: 0 },
   bothSidesEngravable: { type: Boolean, default: false },
-  imageUrl :           { type: String, default: '' }
+  imageUrls:           { type: [String], default: [] }
 })
 
 export default model('Engravables', EngravablesSchema)

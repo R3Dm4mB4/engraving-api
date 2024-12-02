@@ -19,13 +19,13 @@ export const newProduct = async (req, res) => {
     = await validateReqBody(req.body, engravableSchema)
 
     // This must always receive just one image. Change for later
-    const imageUrl = await handleUpload(files, 'engravable_products')
+    const imageUrls = await handleUpload(files, 'engravable_products')
     const newEngravable = new Engravables({
       name,
       price,
       code,
       bothSidesEngravable,
-      imageUrl,
+      imageUrls,
       stock,
       minStock
     })
@@ -40,6 +40,7 @@ export const updateProduct = async (req, res) => {
   let { name, price, code, bothSidesEngravable, imageUrls } = req.body
   const { id } = req.query
   const files = req.files
+  console.log(req)
   try {
     // This must receive just one image. Change for later
     if (files && files.length > 0) {
