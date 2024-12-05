@@ -13,7 +13,6 @@ const JobsSchema = new Schema({
   details:         [{
     productCode:   { type: String, default: '' },
     productImg:    { type: String, default: '' },
-    iconCode:      { type: String, default: '' },
     iconImg:       { type: String, default: '' }, 
     textToEngrave: { type: String, default: '' },
     textFont:      { type: String, default: '' },
