@@ -1,6 +1,5 @@
-import dotenv from 'dotenv'
+import { env } from '../config/envConf.js'
 import jwt from 'jsonwebtoken'
-dotenv.config()
 
 export const auth = (req, res, next) => {
   const token = req.header('x-auth-token')
@@ -9,7 +8,7 @@ export const auth = (req, res, next) => {
     return res.status(401).json({ msg: 'No token provided' })
   }
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    const decoded = jwt.verify(token, env.JWT_SECRET)
     req.user = decoded.user
     next()
   } catch (error) {

@@ -1,6 +1,5 @@
 import nodemailer from 'nodemailer'
-import dotenv from "dotenv"
-dotenv.config()
+import { env } from '../config/envConf.js'
 
 const gateways = {
 	att: "@txt.att.net",
@@ -18,8 +17,8 @@ const transporter = nodemailer.createTransport({
 	port: 587,
 	secure: false,
 	auth: {
-		user: process.env.SMTP_USERNAME,
-		pass: process.env.SMTP_PASSWORD,
+		user: env.SMTP_USERNAME,
+		pass: env.SMTP_PASSWORD,
 	}
 })
 
@@ -30,7 +29,7 @@ export const sendSms = async (number, code) => {
 		const mailOptions = {
 			from: '',
 			to: sendTo,
-			subject: '',
+			subject: 'Koras Jewelers:',
 			text: `Your order code is: ${code}`
 		}
 

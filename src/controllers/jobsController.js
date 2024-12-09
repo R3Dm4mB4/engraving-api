@@ -8,7 +8,6 @@ import {sendSms} from "../utils/nodemailer.js";
 // some values from mongoose schema may be missing
 const jobSchema = vine.object({
   notes: vine.string(),
-  store: vine.string(),
   totalPrice: vine.number(),
   transactionCode: vine.string().optional(),
   customerPhone: vine.string(),
@@ -70,6 +69,7 @@ export const createJob = async(req, res, next) => {
     const io = MakeIo.getIO()
     io.emit('pushJobToList', response)
   } catch (error) {
+    console.error("Err at create job:", error)
     next(error)
   }
 }

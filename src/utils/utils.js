@@ -1,5 +1,4 @@
 import vine from '@vinejs/vine'
-import jsonwebtoken from 'jsonwebtoken'
 import { ValidationError } from './error.js'
 
 /**

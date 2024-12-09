@@ -2,6 +2,7 @@ import vine from '@vinejs/vine'
 import Engravables from '../models/Engravables.js'
 import { handleUpload } from '../utils/cloudinary.js'
 import { validateReqBody } from '../utils/utils.js'
+import {ValidationError} from "../utils/error.js";
 
 const engravableSchema = vine.object({
   name: vine.string(),
@@ -40,7 +41,6 @@ export const updateProduct = async (req, res) => {
   let { name, price, code, bothSidesEngravable, imageUrls } = req.body
   const { id } = req.query
   const files = req.files
-  console.log(req)
   try {
     // This must receive just one image. Change for later
     if (files && files.length > 0) {
@@ -90,20 +90,36 @@ export const getCurrentStock = async (req, res, next) => {
 }
 
 export const verifyStock = async (req, res, next) => {
-  // * Structure of products<array> is [{ id, quantity }]
+  // * Structure of products<array> is [{ productId, quantity }]
   const { products } = req.body
   const responsePerProduct = []
   try {
-    for (const {productId, quantity} of products) {
-      const product = await Engravables.findOne({ _id: productId })
-      // Verify stock availability, if true, take quantity from stock
+    // * Product structure verification.
+    if (!Array.isArray(products) || products.length === 0) {
+      throw new ValidationError('Products is not an array or is empty')
+    }
+    for (const productObj of products) {
+      const { productId, quantity } = productObj
+      if (!productId || !quantity) {
+        responsePerProduct.push({ productId, msg: "Bad array structure" })
+        continue
+      }
+      const product = await Engravables.findById(productId)
+      if (!product) {
+        responsePerProduct.push({ productId, msg: "Product not found" })
+        continue
+      }
+
       if (product.stock < quantity || (product.stock - quantity) < product.minStock || (product.stock - quantity) < 0) {
         responsePerProduct.push({ productId, msg: 'Not enough stock for product' })
       } else {
-        await Engravables.findByIdAndUpdate(productId, { $set: { stock: product.stock - quantity } })
+        await Engravables.findByIdAndUpdate(productId, { $inc: { stock: -quantity } })
+      }
+      if (responsePerProduct.length > 0) {
+        return res.status(400).json({ errors: responsePerProduct })
       }
     }
-    res.status(200).json({ responsePerProduct })
+    res.status(200).json({ msg: 'Stock verified' })
   } catch (error) {
     next(error)
   }
