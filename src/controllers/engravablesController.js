@@ -89,9 +89,8 @@ export const getCurrentStock = async (req, res, next) => {
   }
 }
 
-export const verifyStock = async (req, res, next) => {
-  // * Structure of products<array> is [{ productId, quantity }]
-  const { products } = req.body
+export const takeFromStock = async (products) => {
+  // * Structure of products<array> is [{ productCode, quantity }]
   const responsePerProduct = []
   try {
     // * Product structure verification.
@@ -99,29 +98,29 @@ export const verifyStock = async (req, res, next) => {
       throw new ValidationError('Products is not an array or is empty')
     }
     for (const productObj of products) {
-      const { productId, quantity } = productObj
-      if (!productId || !quantity) {
-        responsePerProduct.push({ productId, msg: "Bad array structure" })
+      const { productCode, quantity } = productObj
+      if (!productCode || !quantity) {
+        responsePerProduct.push({ productCode, msg: "Bad array structure" })
         continue
       }
-      const product = await Engravables.findById(productId)
+      const product = await Engravables.findOne({ code: productCode })
       if (!product) {
-        responsePerProduct.push({ productId, msg: "Product not found" })
+        responsePerProduct.push({ productCode, msg: "Product not found" })
         continue
       }
 
       if (product.stock < quantity || (product.stock - quantity) < product.minStock || (product.stock - quantity) < 0) {
-        responsePerProduct.push({ productId, msg: 'Not enough stock for product' })
+        responsePerProduct.push({ productCode, msg: 'Not enough stock for product' })
       } else {
-        await Engravables.findByIdAndUpdate(productId, { $inc: { stock: -quantity } })
+        await Engravables.findOneAndUpdate({ code: productCode }, { $inc: { stock: -quantity } })
       }
       if (responsePerProduct.length > 0) {
-        return res.status(400).json({ errors: responsePerProduct })
+        throw new ValidationError('Unable to handle product stock properly')
       }
     }
-    res.status(200).json({ msg: 'Stock verified' })
+    return 'Ok'
   } catch (error) {
-    next(error)
+    throw error
   }
 }
 

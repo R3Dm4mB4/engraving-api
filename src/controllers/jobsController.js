@@ -3,6 +3,7 @@ import Jobs from '../models/Jobs.js'
 import { validateReqBody } from '../utils/utils.js'
 import { MakeIo } from '../utils/socketio.js'
 import {sendSms} from "../utils/nodemailer.js";
+import {takeFromStock} from "./engravablesController.js";
 
 // Vine schemas will only be used to validate body from HTTP request,
 // some values from mongoose schema may be missing
@@ -53,6 +54,18 @@ export const createJob = async(req, res, next) => {
       transactionCode
     } = await validateReqBody(req.body, jobSchema)
 
+    const productMap = {}
+    for (const currentDetails of details) {
+      const productCode = currentDetails.productCode
+      productMap[productCode] = (productMap[productCode] || 0) + 1
+    }
+    const productsObj = Object.keys(productMap).map(productCode => ({
+      productCode,
+      quantity: productMap[productCode],
+    }))
+
+    // Takes from stock and creates job. Implement mongo transactions later
+    const result = await takeFromStock(productsObj)
     const newJob = new Jobs({
       notes,
       store,

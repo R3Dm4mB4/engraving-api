@@ -17,7 +17,7 @@ const JobsSchema = new Schema({
     textToEngrave: { type: String, default: '' },
     textFont:      { type: String, default: '' },
     customDesign:  { type: String, default: '' },
-    sideToEngrave: { type: String, default: 'Front', enum: ['Front', 'Backwards', 'Both', 'Ring'] }
+    sideToEngrave: { type: String, default: 'One', enum: ['One', 'Two', 'Custom'] }
   }],
   salesRepName:    { type: String, default: '' },
   assignedTo:      {
